@@ -1,0 +1,28 @@
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Editor directories and files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+*.log
+npm-debug.log*
+
+# Chrome extension testing
+*.pem
+*.crx
+*.zip
+
+# User-specific setup guides (personalized)
+YOUR_SETUP.md
+
+# Temporary files
+tmp/
+temp/

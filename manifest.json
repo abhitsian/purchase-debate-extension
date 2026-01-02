@@ -1,0 +1,62 @@
+{
+  "manifest_version": 3,
+  "name": "Purchase Debate",
+  "version": "1.0.0",
+  "description": "Debate with an AI before making any purchase. Add friction to impulse buying.",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://*.amazon.com/*",
+    "https://*.amazon.in/*",
+    "https://*.zomato.com/*",
+    "https://*.swiggy.com/*",
+    "https://*.flipkart.com/*",
+    "https://*.myntra.com/*",
+    "https://*.ubereats.com/*",
+    "https://*.doordash.com/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://*.amazon.com/*",
+        "https://*.amazon.in/*",
+        "https://*.zomato.com/*",
+        "https://*.swiggy.com/*",
+        "https://*.flipkart.com/*",
+        "https://*.myntra.com/*",
+        "https://*.ubereats.com/*",
+        "https://*.doordash.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["debate-modal.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "web_accessible_resources": [
+    {
+      "resources": ["debate-modal.html"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}
