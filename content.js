@@ -258,6 +258,9 @@ class PurchaseDebateModal {
       // Check if debate should end
       if (this.shouldAllowPurchase()) {
         this.enablePurchaseButton();
+      } else if (this.currentQuestionCount >= this.minimumQuestions) {
+        // Show override option after minimum questions
+        this.showOverrideOption();
       }
     } catch (error) {
       this.removeTypingIndicator();
@@ -287,11 +290,11 @@ class PurchaseDebateModal {
 1. Challenge their purchase by asking probing questions about necessity, budget, alternatives, and long-term value
 2. Be empathetic but firm - you want to help them avoid impulse purchases
 3. Ask follow-up questions based on their responses
-4. After at least ${this.minimumQuestions} meaningful exchanges, if they've made a solid case, you can say "APPROVED" in your response
+4. After at least ${this.minimumQuestions} meaningful exchanges, if they've made a solid case, acknowledge it with phrases like "sounds reasonable", "makes sense", "well-justified", or "approved"
 5. If they haven't justified it well, keep questioning gently
 6. Look for: real need vs want, budget impact, alternatives considered, long-term use
 
-Keep responses concise (2-3 sentences max). Be conversational and helpful, not preachy.`;
+Keep responses concise (2-3 sentences max). Be conversational and helpful, not preachy. If the user has good reasoning, acknowledge it clearly.`;
 
     if (provider === 'ollama') {
       const model = ollamaModel || 'phi3';
@@ -385,10 +388,26 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
       return false;
     }
 
-    // Check if AI has approved
+    // Check if AI has approved (more lenient detection)
     const lastAIMessage = this.debateHistory[this.debateHistory.length - 1];
     if (lastAIMessage && lastAIMessage.role === 'assistant') {
-      return lastAIMessage.content.includes('APPROVED');
+      const content = lastAIMessage.content.toLowerCase();
+
+      // Check for various approval phrases
+      const approvalPhrases = [
+        'approved',
+        'go ahead',
+        'sounds reasonable',
+        'seems justified',
+        'well-justified',
+        'makes sense',
+        'good reasoning',
+        'fair point',
+        'sounds good',
+        'that works'
+      ];
+
+      return approvalPhrases.some(phrase => content.includes(phrase));
     }
 
     return false;
@@ -401,10 +420,27 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
       const proceedBtn = document.createElement('button');
       proceedBtn.id = 'pdb-proceed-btn';
       proceedBtn.className = 'pdb-btn pdb-btn-success';
-      proceedBtn.textContent = '✓ Proceed with Purchase';
+      proceedBtn.textContent = 'Proceed with Purchase';
       proceedBtn.addEventListener('click', () => this.proceedWithPurchase());
       container.insertBefore(proceedBtn, container.firstChild);
     }
+  }
+
+  showOverrideOption() {
+    const container = document.querySelector('.pdb-button-group');
+
+    // Don't show if already exists or if approved button exists
+    if (document.getElementById('pdb-override-btn') || document.getElementById('pdb-proceed-btn')) {
+      return;
+    }
+
+    const overrideBtn = document.createElement('button');
+    overrideBtn.id = 'pdb-override-btn';
+    overrideBtn.className = 'pdb-btn pdb-btn-override';
+    overrideBtn.textContent = 'Proceed Anyway';
+    overrideBtn.title = 'You\'ve answered the minimum questions. Proceed if you\'re confident.';
+    overrideBtn.addEventListener('click', () => this.proceedWithPurchase());
+    container.insertBefore(overrideBtn, container.firstChild);
   }
 
   proceedWithPurchase() {
