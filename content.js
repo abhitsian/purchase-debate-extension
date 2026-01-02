@@ -207,9 +207,11 @@ class PurchaseDebateModal {
     // Allow click if user completed debate
     if (this.allowNextClick) {
       this.allowNextClick = false;
-      return true; // Let the click through
+      console.log('[Purchase Debate] Allowing purchase to proceed');
+      return; // Don't prevent default - let it through
     }
 
+    // Block the purchase and show debate modal
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -458,16 +460,21 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
   proceedWithPurchase() {
     // Determine if user overrode or AI approved
     const outcome = this.shouldAllowPurchase() ? 'approved' : 'override';
-    this.closeModal(outcome);
 
     if (this.blockedButton) {
       // Set flag to allow next click
       this.allowNextClick = true;
 
-      // Trigger the click - our handler will let it through
+      // Close modal first
+      this.closeModal(outcome);
+
+      // Trigger the original button action - our handler will let it through
       setTimeout(() => {
+        console.log('[Purchase Debate] Triggering original button action');
         this.blockedButton.click();
-      }, 100);
+      }, 200);
+    } else {
+      this.closeModal(outcome);
     }
   }
 
