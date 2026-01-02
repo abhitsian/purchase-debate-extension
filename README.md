@@ -55,6 +55,8 @@ E-commerce exploits System 1. This extension activates System 2.
 
 Unlike budgeting apps that shame you or browser blockers that restrict you, this preserves your freedom. You can still buy anything. You just have to think first.
 
+**The override option:** After answering the minimum questions, you can proceed even if the AI disagrees. The goal is reflection, not restriction. The friction itself makes you pause and think - that's what matters.
+
 ---
 
 ## Features
@@ -132,8 +134,9 @@ Click "Buy Now"
   → AI asks: "Why do you want this?"
   → You respond
   → AI challenges your reasoning
-  → Minimum 3 exchanges required
-  → AI approves if justified
+  → After 3 exchanges, you get options:
+     • Green button if AI approves your reasoning
+     • Orange "Proceed Anyway" button (your choice to override)
   → Purchase proceeds
 ```
 
