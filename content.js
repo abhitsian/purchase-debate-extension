@@ -78,7 +78,6 @@ class PurchaseDebateModal {
     this.minimumQuestions = 3;
     this.currentQuestionCount = 0;
     this.evaluator = null; // Will be initialized when debate starts
-    this.allowNextClick = false; // Flag to allow click through
   }
 
   async init() {
@@ -197,20 +196,18 @@ class PurchaseDebateModal {
       buttons.forEach(button => {
         if (!button.dataset.pdbAttached) {
           button.dataset.pdbAttached = 'true';
-          button.addEventListener('click', (e) => this.handleButtonClick(e), true);
+
+          // Store bound handler so we can remove it later
+          const handler = (e) => this.handleButtonClick(e);
+          button._pdbHandler = handler;
+
+          button.addEventListener('click', handler, true);
         }
       });
     });
   }
 
   handleButtonClick(event) {
-    // Allow click if user completed debate
-    if (this.allowNextClick) {
-      this.allowNextClick = false;
-      console.log('[Purchase Debate] Allowing purchase to proceed');
-      return; // Don't prevent default - let it through
-    }
-
     // Block the purchase and show debate modal
     event.preventDefault();
     event.stopPropagation();
@@ -462,16 +459,26 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
     const outcome = this.shouldAllowPurchase() ? 'approved' : 'override';
 
     if (this.blockedButton) {
-      // Set flag to allow next click
-      this.allowNextClick = true;
-
       // Close modal first
       this.closeModal(outcome);
 
-      // Trigger the original button action - our handler will let it through
+      // Remove our event listener temporarily
+      if (this.blockedButton._pdbHandler) {
+        this.blockedButton.removeEventListener('click', this.blockedButton._pdbHandler, true);
+      }
+
+      // Trigger the original button action
       setTimeout(() => {
         console.log('[Purchase Debate] Triggering original button action');
         this.blockedButton.click();
+
+        // Re-attach our listener after a delay
+        setTimeout(() => {
+          if (this.blockedButton && this.blockedButton._pdbHandler) {
+            this.blockedButton.addEventListener('click', this.blockedButton._pdbHandler, true);
+            console.log('[Purchase Debate] Listener re-attached');
+          }
+        }, 1000);
       }, 200);
     } else {
       this.closeModal(outcome);
