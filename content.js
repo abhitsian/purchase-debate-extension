@@ -78,6 +78,7 @@ class PurchaseDebateModal {
     this.minimumQuestions = 3;
     this.currentQuestionCount = 0;
     this.evaluator = null; // Will be initialized when debate starts
+    this.allowNextClick = false; // Flag to allow click through
   }
 
   async init() {
@@ -203,6 +204,12 @@ class PurchaseDebateModal {
   }
 
   handleButtonClick(event) {
+    // Allow click if user completed debate
+    if (this.allowNextClick) {
+      this.allowNextClick = false;
+      return true; // Let the click through
+    }
+
     event.preventDefault();
     event.stopPropagation();
     event.stopImmediatePropagation();
@@ -454,14 +461,13 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
     this.closeModal(outcome);
 
     if (this.blockedButton) {
-      // Temporarily remove our listener and trigger the original action
-      this.blockedButton.dataset.pdbAttached = 'false';
-      this.blockedButton.click();
+      // Set flag to allow next click
+      this.allowNextClick = true;
 
-      // Re-attach after a short delay
+      // Trigger the click - our handler will let it through
       setTimeout(() => {
-        this.blockedButton.dataset.pdbAttached = 'true';
-      }, 1000);
+        this.blockedButton.click();
+      }, 100);
     }
   }
 
