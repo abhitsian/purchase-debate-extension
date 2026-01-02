@@ -55,7 +55,7 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["debate-modal.html"],
+      "resources": ["debate-modal.html", "evals-viewer.html", "evals-viewer.js"],
       "matches": ["<all_urls>"]
     }
   ]

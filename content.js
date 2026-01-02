@@ -77,6 +77,7 @@ class PurchaseDebateModal {
     this.blockedButton = null;
     this.minimumQuestions = 3;
     this.currentQuestionCount = 0;
+    this.evaluator = null; // Will be initialized when debate starts
   }
 
   async init() {
@@ -216,12 +217,16 @@ class PurchaseDebateModal {
     this.debateHistory = [];
     this.debateComplete = false;
     this.currentQuestionCount = 0;
+    this.debateStartTime = Date.now();
     this.modal.style.display = 'flex';
     document.getElementById('pdb-user-input').focus();
     this.updateProgress();
   }
 
-  closeModal() {
+  closeModal(outcome = 'cancelled') {
+    // Log debate for evaluation
+    this.logDebateToEvals(outcome);
+
     this.modal.style.display = 'none';
     this.blockedButton = null;
   }
@@ -444,7 +449,9 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
   }
 
   proceedWithPurchase() {
-    this.closeModal();
+    // Determine if user overrode or AI approved
+    const outcome = this.shouldAllowPurchase() ? 'approved' : 'override';
+    this.closeModal(outcome);
 
     if (this.blockedButton) {
       // Temporarily remove our listener and trigger the original action
@@ -455,6 +462,37 @@ Keep responses concise (2-3 sentences max). Be conversational and helpful, not p
       setTimeout(() => {
         this.blockedButton.dataset.pdbAttached = 'true';
       }, 1000);
+    }
+  }
+
+  async logDebateToEvals(outcome) {
+    if (this.debateHistory.length === 0) return;
+
+    const debate = {
+      id: `debate_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      timestamp: new Date().toISOString(),
+      site: window.location.hostname,
+      url: window.location.href,
+      duration: Date.now() - (this.debateStartTime || Date.now()),
+      messages: this.debateHistory,
+      outcome: outcome,
+      questionCount: this.debateHistory.filter(m => m.role === 'user').length,
+      minimumQuestionsRequired: this.minimumQuestions
+    };
+
+    try {
+      const { debates = [] } = await chrome.storage.local.get(['debates']);
+      debates.push(debate);
+
+      // Keep last 100 debates
+      if (debates.length > 100) {
+        debates.shift();
+      }
+
+      await chrome.storage.local.set({ debates });
+      console.log('[Purchase Debate] Logged debate:', debate.id);
+    } catch (error) {
+      console.error('[Purchase Debate] Failed to log debate:', error);
     }
   }
 

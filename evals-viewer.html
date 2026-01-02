@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Debate - Evaluations</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+      background: #0f172a;
+      color: #e2e8f0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      color: #a78bfa;
+      margin-bottom: 20px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 30px;
+    }
+
+    .stat-card {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-value {
+      font-size: 32px;
+      font-weight: bold;
+      color: #a78bfa;
+      margin-top: 5px;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background: #6366f1;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background 0.2s;
+    }
+
+    button:hover {
+      background: #4f46e5;
+    }
+
+    button.secondary {
+      background: #334155;
+    }
+
+    button.secondary:hover {
+      background: #475569;
+    }
+
+    .debates-list {
+      background: #1e293b;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      overflow: hidden;
+    }
+
+    .debate-item {
+      padding: 15px 20px;
+      border-bottom: 1px solid #334155;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .debate-item:hover {
+      background: #2d3748;
+    }
+
+    .debate-item:last-child {
+      border-bottom: none;
+    }
+
+    .debate-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .debate-id {
+      font-size: 12px;
+      color: #94a3b8;
+      font-family: monospace;
+    }
+
+    .debate-outcome {
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .outcome-approved {
+      background: #10b98120;
+      color: #10b981;
+    }
+
+    .outcome-override {
+      background: #f59e0b20;
+      color: #f59e0b;
+    }
+
+    .outcome-cancelled {
+      background: #ef444420;
+      color: #ef4444;
+    }
+
+    .debate-meta {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    .debate-site {
+      color: #a78bfa;
+      font-weight: 500;
+    }
+
+    .debate-details {
+      display: none;
+      margin-top: 15px;
+      padding: 15px;
+      background: #0f172a;
+      border-radius: 6px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .debate-details.open {
+      display: block;
+    }
+
+    .message {
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    .message-user {
+      background: #2d3748;
+      border-left: 3px solid #6366f1;
+    }
+
+    .message-ai {
+      background: #1e293b;
+      border-left: 3px solid #a78bfa;
+    }
+
+    .message-role {
+      font-size: 11px;
+      color: #94a3b8;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+
+    pre {
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 6px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.4;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #64748b;
+    }
+
+    .empty-state h2 {
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Purchase Debate Evaluations</h1>
+
+    <div class="stats" id="stats">
+      <div class="stat-card">
+        <div class="stat-label">Total Debates</div>
+        <div class="stat-value" id="total-debates">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">AI Approved</div>
+        <div class="stat-value" id="approved-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">User Override</div>
+        <div class="stat-value" id="override-count">0</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Cancelled</div>
+        <div class="stat-value" id="cancelled-count">0</div>
+      </div>
+    </div>
+
+    <div class="actions">
+      <button onclick="exportJSON()">Export JSON</button>
+      <button onclick="exportJSONL()">Export JSONL (Training)</button>
+      <button onclick="exportCSV()">Export CSV</button>
+      <button class="secondary" onclick="clearDebates()">Clear All Data</button>
+    </div>
+
+    <div class="debates-list" id="debates-list"></div>
+  </div>
+
+  <script src="evals-viewer.js"></script>
+</body>
+</html>

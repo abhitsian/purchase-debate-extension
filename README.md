@@ -194,11 +194,35 @@ const SITE_SELECTORS = {
 
 ---
 
+## Evaluation System
+
+Every debate is automatically logged for analysis and improvement.
+
+**View your debates:**
+- Click extension icon → "View Evals"
+- See stats, conversation history, outcomes
+
+**Export options:**
+- **JSON** - Full debate data for analysis
+- **JSONL** - Training data for fine-tuning LLMs
+- **CSV** - Spreadsheet analysis
+
+**Use cases:**
+- Analyze which prompts work best
+- Fine-tune your own Ollama model
+- Track approval vs override rates
+- Improve debate quality over time
+
+See [EVAL_GUIDE.md](EVAL_GUIDE.md) for complete documentation.
+
+---
+
 ## Contributing
 
 - Add sites: Submit PRs with new selectors
 - Improve prompts: Better questioning logic
 - Report bugs: Use GitHub Issues
+- Share eval insights: Help improve prompts
 
 ---
 

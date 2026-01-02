@@ -13,6 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
       window.close();
     });
   });
+
+  document.getElementById('evalsBtn').addEventListener('click', () => {
+    chrome.tabs.create({ url: chrome.runtime.getURL('evals-viewer.html') });
+  });
 });
 
 function loadStatus() {
