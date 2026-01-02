@@ -38,10 +38,10 @@ In her groundbreaking work *"Addiction by Design"*, Natasha Dow Schüll revealed
 
 The easier it is to buy, the less we think.
 
-- Americans spend **$5,400/year** on impulse purchases
-- **84%** of shoppers have made impulse buys online
-- **71%** regret their impulse purchases
-- Average American has **$7,000** in credit card debt
+- **84%** of online shoppers have made impulse purchases
+- **71%** regret their impulse buys later
+- Flash sales, festival offers, and "limited time deals" drive emotional buying
+- Credit cards, UPI, and EMI options remove the psychological friction of payment
 
 We're not weak-willed. **We're up against systems designed by teams of engineers, psychologists, and data scientists whose job is to maximize clicks.**
 
